@@ -91,7 +91,7 @@ implícito `cookie` y `ResourceBundle` (`messages*.properties`).
 
 ## Cómo compilar y desplegar
 
-1. Clonar el repositorio: `git clone https://github.com/diegoalferez/Alferez-post1-u6.git`
+1. Clonar el repositorio: `git clone https://github.com/diegoalferez/Alferez-post6-u6.git`
 2. Abrir la carpeta como proyecto Maven (IntelliJ IDEA / VS Code).
 3. Ejecutar `mvn clean package`.
 4. Desplegar `target/gestor-tareas-mvc.war` en Tomcat 10.x (carpeta `webapps`)
