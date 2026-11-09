@@ -1,6 +1,7 @@
 package com.ejemplo.mvc.controller;
 
 import com.ejemplo.mvc.controller.comando.*;
+import com.ejemplo.mvc.service.AutenticacionService;
 import com.ejemplo.mvc.service.TareaService;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -8,22 +9,25 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @WebServlet(name = "FrontControllerServlet", urlPatterns = {"/app"})
 public class FrontControllerServlet extends HttpServlet {
+
+    private static final Set<String> PUBLICOS = Set.of("login", "idioma");
 
     private final Map<String, Comando> comandos = new HashMap<>();
 
     @Override
     public void init() throws ServletException {
         TareaService tareaService = new TareaService();
+        AutenticacionService authService = new AutenticacionService();
 
-        // Contexto de aplicación: configuración global leída una sola vez
-        // desde web.xml y compartida por todos los usuarios
         ServletContext ctx = getServletContext();
         ctx.setAttribute("nombreApp", ctx.getInitParameter("app.nombre"));
         ctx.setAttribute("maxLongitudTitulo",
@@ -34,6 +38,9 @@ public class FrontControllerServlet extends HttpServlet {
         comandos.put("guardar", new GuardarComando(tareaService));
         comandos.put("eliminar", new EliminarComando(tareaService));
         comandos.put("completar", new CompletarComando(tareaService));
+        comandos.put("login", new LoginComando(authService));
+        comandos.put("logout", new LogoutComando());
+        comandos.put("idioma", new IdiomaComando());
     }
 
     @Override
@@ -53,6 +60,16 @@ public class FrontControllerServlet extends HttpServlet {
             throws ServletException, IOException {
         String nombreComando = req.getParameter("comando");
         if (nombreComando == null) nombreComando = "listar";
+
+        // Punto único de control de sesión: se resuelve aquí, una sola vez,
+        // para todos los comandos protegidos (todos excepto login/idioma)
+        if (!PUBLICOS.contains(nombreComando)) {
+            HttpSession session = req.getSession(false);
+            if (session == null || session.getAttribute("usuarioActual") == null) {
+                resp.sendRedirect(req.getContextPath() + "/app?comando=login");
+                return;
+            }
+        }
 
         Comando comando = comandos.get(nombreComando);
         if (comando == null) {
