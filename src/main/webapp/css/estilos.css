@@ -1,0 +1,12 @@
+body { font-family: Arial, sans-serif; margin: 2rem auto; max-width: 960px; color: #222; padding: 0 1rem; }
+h1 { color: #21295C; }
+a { color: #1B3B6F; }
+table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+th { background: #21295C; color: #fff; }
+tr:nth-child(even) { background: #f5f7fb; }
+.completada { text-decoration: line-through; color: #777; }
+.error { color: #C62828; font-weight: bold; }
+form label { display: block; margin-bottom: 0.8rem; }
+form input[type=text], form input[type=password], form select { display: block; padding: 6px; width: 320px; margin-top: 4px; }
+button { padding: 8px 16px; background: #21295C; color: #fff; border: 0; cursor: pointer; margin-right: 8px; }
